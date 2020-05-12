@@ -42,10 +42,6 @@ def picklist(val, picklistValues):
     return False
 
 
-
-
-
-
 #  Start
 # Read in sample Sheet submission
 print("START")
