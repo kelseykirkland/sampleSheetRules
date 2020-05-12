@@ -1,6 +1,10 @@
 import numpy as np
 import pandas as pd
 from pathlib import Path
+import datetime
+
+# Rules for Sample Submission Sheet
+# All return True is the rule is violated and should be flagged
 
 # checks for spaces in the value (the string) of the row of the dataframe
 # returns False if there is no space characters
@@ -35,12 +39,34 @@ def characterLimit(val):
 # parameters is the list of values in the row and the list of accepted input
 # returns False if the string is in the picklistValues
 # returns True if the val is not in the list of accepted input
-def picklist(val, picklistValues):
-    if val not in picklistValues:
+def picklist(val, picklistvalues):
+    if val not in picklistvalues:
         print(f"{val} is not one of the accepted values")
         return True
     return False
 
+# checks if the number is an integer (no decimals) or a float (decimals)
+# parameter rowType is either "int" or "float"
+# returns False the val type matches rowType (not flagged)
+# returns True if the val type is not the rowType (true that it gets flagged)
+def checkNumberType(val, numtype):
+    if isinstance(val, numtype):
+        return False
+    else:
+        print(f"{val} should be a {numtype}")
+        return True
+
+
+# checks if val is a valid date in the format YYYY-MM-DD
+# returns False the val is a valid day in the correct format (no flag)
+# returns True if the val is not a valid day in the correct format (true that it gets flagged)
+def isDate(val):
+    try:
+        datetime.datetime.strptime(val, '%Y-%m-%d')
+    except ValueError:
+        #raise ValueError("Incorrect data format, should be YYYY-MM-DD")
+        return True
+    return False
 
 #  Start
 # Read in sample Sheet submission
@@ -56,7 +82,6 @@ for i, row in ss_df.iterrows():
     checkForSpaces(row['Sample_ID'])
     disallowedChars(row['Sample_ID'], disCharList)
     characterLimit(row['Sample_ID'])
-
 
 
 print("Doneski")
