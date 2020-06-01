@@ -1,7 +1,9 @@
+import click as click
 import numpy as np
 import pandas as pd
 from pathlib import Path
 import datetime
+
 
 # Rules for Sample Submission Sheet
 # All return True is the rule is violated and should be flagged, otherwise False
@@ -17,6 +19,7 @@ def checkforspaces(val: str) -> bool:
         return True
     return False
 
+
 def disallowedchars(val: str, discharlist) -> bool:
     """
     this method check for any of the characters in the provided list
@@ -30,6 +33,7 @@ def disallowedchars(val: str, discharlist) -> bool:
             return True
     return False
 
+
 def characterlimit(val: str) -> bool:
     """
     this method checks that val is under 20 characters
@@ -40,6 +44,7 @@ def characterlimit(val: str) -> bool:
         print(f"Exceeded character length of 20 for {val}")
         return True
     return False
+
 
 def picklist(val: str, picklistvalues) -> bool:
     """
@@ -52,6 +57,7 @@ def picklist(val: str, picklistvalues) -> bool:
         print(f"{val} is not one of the accepted values")
         return True
     return False
+
 
 def checknumbertype(val: str, numtype: str) -> bool:
     """
@@ -66,6 +72,7 @@ def checknumbertype(val: str, numtype: str) -> bool:
         print(f"{val} should be a {numtype}")
         return True
 
+
 def alluppercase(val: str) -> bool:
     """
     this method checks if every value in val is uppercase
@@ -78,6 +85,7 @@ def alluppercase(val: str) -> bool:
         print(f"{val} should be all uppercase letters")
         return True
 
+
 def isDate(val: str) -> bool:
     """
     this method checks if val is a valid date in the proper format
@@ -87,23 +95,86 @@ def isDate(val: str) -> bool:
     try:
         datetime.datetime.strptime(val, '%Y-%m-%d')
     except ValueError:
-        #raise ValueError("Incorrect data format, should be YYYY-MM-DD")
+        # raise ValueError("Incorrect data format, should be YYYY-MM-DD")
         return True
     return False
 
+
 #  Start
 # Read in sample Sheet submission
-print("START")
-f = Path('/home/kelsey/Documents/SS_20200122_META_WGS_16S_M01308.csv')
+# filename as commandline argument
+
+@click.command()
+# @click.argument('filename')
+@click.argument('filename', type=click.Path(exists=True))
+def readfile(filename):
+
+    print("START")
+
+    print("Opening file: ")
+    click.echo(click.format_filename(filename))
+
+    f = Path(filename)
+    ss_df = pd.read_csv(str(f), skiprows=19)
+
+    disCharList = ["#", "*", ".", "\\", "/", "[", "]", ":", ";", "|", "="]  # need to do """
+    picklistValues = ["Salmonella", "VTEC", "Parasitology", "Botulism", "Listeria", "Vibrio",
+                  "Virology" "Rapid-Diagnostics", "Other"]
+    picklistValues2 = ["Cells in DNA/RNA Shield (~0.1ug cells in 400uL)", "Extracted DNA", "Amplicon", "Other"]
+
+    for i, row in ss_df.iterrows():
+
+        # Sample_ID
+        checkforspaces(row['Sample_ID'])
+        disallowedchars(row['Sample_ID'], disCharList)
+        characterlimit(row['Sample_ID'])
+
+        # Sample_Name
+        checkforspaces(row['Sample_Name'])
+        disallowedchars(row['Sample_Name'], disCharList)
+        characterlimit(row['Sample_Name'])
+
+        # Sample_Plate  - free text, no rules
+
+        # Sample_Well  - opt
+        # Cap followed by 2 digits
+
+        # Submitting_Lab
+        # picklist(row['Submitting_Lab'], picklistValues)
+
+        # Submission_Date
+        # isDate(row['Submission_Date'])
+
+        # Submission_Format
+        # picklist(row['Submission_Format'], picklistValues2)
+
+        # Sample_Volume
+        # isdigit
+
+        # Requested_Service
+        # picklistValues3 = ["list"]
+        # picklist(row['Requested_Service'], picklistValues3)
+
+        # Submitter_Project_Name - free text
+
+        # Genus - single capitalized word, only letters
+
+        # Species - single capitalized word, only letter
+
+        # Culture_Date
+        # isDate(row["Culture_Date"])
+
+
+
+
+    print("Doneski")
+
+
+# call readfile function
+readfile()
+
+
+
+# f = Path('/home/kelsey/Documents/SS_20200122_META_WGS_16S_M01308.csv')
 # ss_df = pd.read_csv(f)
-ss_df = pd.read_csv(str(f), skiprows=19)
-
-disCharList = ["#", "*", ".", "\\", "/", "[", "]", ":", ";", "|", "="]   # need to do """
-picklistValues= ["Salmonella", "VTEC", "Parasitology", "Botulism", "Listeria", "Vibrio", "Virology" "Rapid-Diagnostics", "Other"]
-
-for i, row in ss_df.iterrows():
-    checkforspaces(row['Sample_ID'])
-    disallowedchars(row['Sample_ID'], disCharList)
-    characterlimit(row['Sample_ID'])
-
-print("Doneski")
+#ss_df = pd.read_csv(str(f), skiprows=19)
