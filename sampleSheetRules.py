@@ -86,7 +86,7 @@ def alluppercase(val: str) -> bool:
         return True
 
 
-def isDate(val: str) -> bool:
+def isdate(val: str) -> bool:
     """
     this method checks if val is a valid date in the proper format
     :param val: string value of the row
@@ -100,6 +100,39 @@ def isDate(val: str) -> bool:
     return False
 
 
+def wellformat(val: str) -> bool:
+    """
+    this method checks to see if it fits the Well format of Capital Letter then two digits
+    :param val: string value in the row
+    :return: True if it is not in the proper format, false if it is correct
+    """
+    if len(val) > 3:
+        print(f"Improper Well format for {val}")
+        return True
+    if (val[0].isalpha()) and val[0].isupper() and val[1].isdigit() and val[2].isdigit():
+        return False
+    print(f"Improper Well format for {val}")
+    return True
+
+
+def singleword(val: str) -> bool:
+    """
+    this method checks if val is a single capitalized word
+    :param val: string value in the rule
+    :return: True is it is not a single capitalized word, false if it is
+    """
+    checkforspaces(val)
+    if val[0].islower():
+        print("Not a single capitalized word for {val}")
+        return True
+    if not val.isalpha():
+        print("Not a single capitalized word for {val}")
+        return False
+
+
+# check for empties with  empty_rows = df[df['name column'].isnull()]
+# df[df['name_column'].isnull.values.any()
+
 #  Start
 # Read in sample Sheet submission
 # filename as commandline argument
@@ -108,22 +141,22 @@ def isDate(val: str) -> bool:
 # @click.argument('filename')
 @click.argument('filename', type=click.Path(exists=True))
 def readfile(filename):
-
     print("START")
-
     print("Opening file: ")
     click.echo(click.format_filename(filename))
 
     f = Path(filename)
     ss_df = pd.read_csv(str(f), skiprows=19)
+    parse(ss_df)
 
+
+def parse(ss_df):
     disCharList = ["#", "*", ".", "\\", "/", "[", "]", ":", ";", "|", "="]  # need to do """
     picklistValues = ["Salmonella", "VTEC", "Parasitology", "Botulism", "Listeria", "Vibrio",
-                  "Virology" "Rapid-Diagnostics", "Other"]
+                      "Virology" "Rapid-Diagnostics", "Other"]
     picklistValues2 = ["Cells in DNA/RNA Shield (~0.1ug cells in 400uL)", "Extracted DNA", "Amplicon", "Other"]
 
     for i, row in ss_df.iterrows():
-
         # Sample_ID
         checkforspaces(row['Sample_ID'])
         disallowedchars(row['Sample_ID'], disCharList)
@@ -143,7 +176,7 @@ def readfile(filename):
         # picklist(row['Submitting_Lab'], picklistValues)
 
         # Submission_Date
-        # isDate(row['Submission_Date'])
+        # isdate(row['Submission_Date'])
 
         # Submission_Format
         # picklist(row['Submission_Format'], picklistValues2)
@@ -162,10 +195,7 @@ def readfile(filename):
         # Species - single capitalized word, only letter
 
         # Culture_Date
-        # isDate(row["Culture_Date"])
-
-
-
+        # isdate(row["Culture_Date"])
 
     print("Doneski")
 
@@ -173,8 +203,9 @@ def readfile(filename):
 # call readfile function
 readfile()
 
-
-
 # f = Path('/home/kelsey/Documents/SS_20200122_META_WGS_16S_M01308.csv')
 # ss_df = pd.read_csv(f)
-#ss_df = pd.read_csv(str(f), skiprows=19)
+# ss_df = pd.read_csv(str(f), skiprows=19)
+
+
+# if 'something' in dataframe.colums:
