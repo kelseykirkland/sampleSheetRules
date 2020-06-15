@@ -201,7 +201,7 @@ def parse(ss_df):
 
 
 # call readfile function
-readfile()
+#readfile()
 
 # f = Path('/home/kelsey/Documents/SS_20200122_META_WGS_16S_M01308.csv')
 # ss_df = pd.read_csv(f)
