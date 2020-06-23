@@ -66,11 +66,18 @@ def checknumbertype(val: str, numtype: str) -> bool:
     :param numtype: the expected type, int or float
     :return: True is the val is not the type given, False if it is the matching type
     """
-    if isinstance(val, numtype):
-        return False
-    else:
-        print(f"{val} should be a {numtype}")
-        return True
+    if numtype == "float":
+        if isinstance(val, float):
+            return False
+        else:
+            print(f"{val} should be a Float (Decimal)")
+            return True
+    if numtype == "int":
+        if isinstance(val, int):
+            return False
+        else:
+            print(f"{val} should be an int (No Decimal)")
+            return True
 
 
 def alluppercase(val: str) -> bool:
@@ -121,13 +128,16 @@ def singleword(val: str) -> bool:
     :param val: string value in the rule
     :return: True is it is not a single capitalized word, false if it is
     """
-    checkforspaces(val)
+    if checkforspaces(val):
+        return True
     if val[0].islower():
         print("Not a single capitalized word for {val}")
         return True
     if not val.isalpha():
         print("Not a single capitalized word for {val}")
-        return False
+        return True
+    return False
+
 
 
 # check for empties with  empty_rows = df[df['name column'].isnull()]
@@ -146,6 +156,16 @@ def readfile(filename):
     click.echo(click.format_filename(filename))
 
     f = Path(filename)
+
+    counter = 1
+    #with open(str(f)) as f:
+    #    for line in f:
+    #        if '[Data]' in line:
+    #            break
+    #        else:
+    #            counter += 1
+    #ss_df = pd.read_csv(f, sep=",", index_col=False, skiprows=counter)
+
     ss_df = pd.read_csv(str(f), skiprows=19)
     parse(ss_df)
 
@@ -201,7 +221,9 @@ def parse(ss_df):
 
 
 # call readfile function
-#readfile()
+if __name__ == "__main__":
+    readfile()
+
 
 # f = Path('/home/kelsey/Documents/SS_20200122_META_WGS_16S_M01308.csv')
 # ss_df = pd.read_csv(f)
