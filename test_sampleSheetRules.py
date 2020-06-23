@@ -1,6 +1,5 @@
 import pytest
 
-# from sampleSheetRules import checkforspaces
 from sampleSheetRules import checkforspaces, disallowedchars, characterlimit, picklist, checknumbertype, alluppercase, \
     wellformat, singleword
 
